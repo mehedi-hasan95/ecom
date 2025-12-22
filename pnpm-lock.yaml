@@ -76,6 +76,9 @@ importers:
       '@types/node':
         specifier: ^20.11.17
         version: 20.19.25
+      '@workspace/schemas':
+        specifier: workspace:*
+        version: link:../../packages/schemas
       '@workspace/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -204,6 +207,16 @@ importers:
       typescript-eslint:
         specifier: ^8.39.0
         version: 8.39.0(eslint@9.32.0(jiti@2.6.1))(typescript@5.9.2)
+
+  packages/schemas:
+    dependencies:
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+    devDependencies:
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
 
   packages/status-errors:
     dependencies:
