@@ -7,8 +7,19 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  USER
+  SELLER
+  ADMIN
+}
+
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String?
+  userRole  Role     @default(USER)
+  phone     String?
+  createdAt DateTime @default(now()) @db.Timestamptz()
+  updatedAt DateTime @updatedAt
 }
