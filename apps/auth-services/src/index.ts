@@ -1,11 +1,20 @@
 import "dotenv/config";
 import { serve } from "@hono/node-server";
-import { Hono } from "hono";
 import { cors } from "hono/cors";
-import auth from "./auth";
 import { HTTPException } from "hono/http-exception";
-const app = new Hono().basePath("/api/v1");
+import {
+  defaultHook,
+  openAPIConfiguration,
+} from "@workspace/open-api/lib/open-api-configuration";
+import { OpenAPIHono } from "@hono/zod-openapi";
 
+// import RPC path
+// import auth from "./auth";
+import auth from "./auth/auth.index";
+
+const app = new OpenAPIHono({
+  defaultHook,
+}).basePath("/api/v1");
 app.use(
   cors({
     origin: ["http://localhost:3000"],
@@ -40,6 +49,6 @@ serve(
     console.log(`Server is running on http://localhost:${info.port}`);
   }
 );
-
+openAPIConfiguration(app);
 export default app;
 export type AppType = typeof routes;
