@@ -17,7 +17,8 @@
     "@workspace/db": "workspace:*",
     "@workspace/status-message": "workspace:*",
     "@workspace/open-api": "workspace:*",
-    "@workspace/redis": "workspace:*"
+    "@workspace/redis": "workspace:*",
+    "@workspace/better-auth": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",

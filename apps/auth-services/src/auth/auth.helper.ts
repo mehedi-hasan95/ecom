@@ -1,7 +1,6 @@
 import redis from "@workspace/redis";
 import { StatusErrors } from "@workspace/status-message";
 import crypto from "crypto";
-import { email } from "zod/v4";
 
 export const checkOtpRestrictions = async (email: string) => {
   if (await redis.get(`otp_lock:${email}`)) {

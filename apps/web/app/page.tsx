@@ -3,7 +3,6 @@ import { Button } from "@workspace/ui/components/button";
 
 export default async function Page() {
   const data = await prisma.user.findMany();
-  console.log(data);
   return (
     <div className="flex items-center justify-center min-h-svh">
       <div className="flex flex-col items-center justify-center gap-4">

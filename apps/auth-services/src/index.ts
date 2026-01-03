@@ -11,6 +11,7 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 // import RPC path
 // import auth from "./auth";
 import auth from "./auth/auth.index";
+import betterAuth from "./better-auth/better-index";
 
 const app = new OpenAPIHono({
   defaultHook,
@@ -23,7 +24,7 @@ app.use(
   })
 );
 
-const routes = app.route("/auth", auth);
+const routes = app.route("/better-auth", betterAuth);
 
 app.onError((err, c) => {
   if (err instanceof HTTPException) {
