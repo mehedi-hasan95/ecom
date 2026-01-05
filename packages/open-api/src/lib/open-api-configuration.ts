@@ -1,7 +1,7 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { Scalar } from "@scalar/hono-api-reference";
 import { ZodError } from "zod";
-import { Context, ValidationTargets } from "hono";
+import { Context } from "hono";
 
 export const openAPIConfiguration = (app: OpenAPIHono) => {
   app.doc("/doc", {
@@ -11,7 +11,15 @@ export const openAPIConfiguration = (app: OpenAPIHono) => {
       title: "My API",
     },
   });
-  app.get("/scalar", Scalar({ url: "/api/v1/doc", pageTitle: "Awesome API" }));
+  app.get(
+    "/scalar",
+    Scalar({
+      url: "/api/v1/doc",
+      pageTitle: "Ecom API",
+      darkMode: true,
+      defaultHttpClient: { clientKey: "fetch", targetKey: "js" },
+    })
+  );
 };
 
 // Zod error beautify

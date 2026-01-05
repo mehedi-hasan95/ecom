@@ -9,9 +9,8 @@ import {
 import { OpenAPIHono } from "@hono/zod-openapi";
 
 // import RPC path
-// import auth from "./auth";
-import auth from "./auth/auth.index";
-import betterAuth from "./better-auth/better-index";
+import authintication from "./auth-example/auth.index";
+import auth from "./auth/better-index";
 
 const app = new OpenAPIHono({
   defaultHook,
@@ -24,7 +23,7 @@ app.use(
   })
 );
 
-const routes = app.route("/better-auth", betterAuth);
+const routes = app.route("/auth", auth);
 
 app.onError((err, c) => {
   if (err instanceof HTTPException) {
@@ -48,6 +47,9 @@ serve(
   },
   (info) => {
     console.log(`Server is running on http://localhost:${info.port}`);
+    console.log(
+      `You can get the documentation at http://localhost:${info.port}/api/v1/scalar`
+    );
   }
 );
 openAPIConfiguration(app);
