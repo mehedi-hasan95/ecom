@@ -1,14 +1,8 @@
-import { OpenAPIHono } from "@hono/zod-openapi";
-import { authCreateRoute, authGetRoute } from "./auth.route";
-import { authCreateHandler, authGetHandler } from "./auth.handler";
-import { defaultHook } from "@workspace/open-api/lib/open-api-configuration";
+import { Hono } from "hono";
 
-const app = new OpenAPIHono({
-  defaultHook,
-});
-
-app
-  .openapi(authGetRoute, authGetHandler)
-  .openapi(authCreateRoute, authCreateHandler);
+const app = new Hono()
+  .get("/", (c) => c.json("list books"))
+  .post("/", (c) => c.json("create a book", 201))
+  .get("/:id", (c) => c.json(`get ${c.req.param("id")}`));
 
 export default app;

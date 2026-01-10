@@ -10,7 +10,7 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 
 // import RPC path
 import authintication from "./auth-example/auth.index";
-import auth from "./auth/better-index";
+import auth from "./auth/auth-index";
 
 const app = new OpenAPIHono({
   defaultHook,

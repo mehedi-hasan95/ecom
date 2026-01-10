@@ -54,3 +54,10 @@ export const loginSchema = z.object({
     .string({ message: "Password is required" })
     .openapi({ example: "123456" }),
 });
+
+export const verifyRegistrationEmailSchema = z.object({
+  email: z.string().openapi({ example: "mehedi.jsx@gmail.com" }),
+  otp: z
+    .string({ message: "Enter the verification OTP send your email" })
+    .openapi({ example: "123456" }),
+});

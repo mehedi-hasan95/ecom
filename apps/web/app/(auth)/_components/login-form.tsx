@@ -12,6 +12,9 @@ import { Input } from "@workspace/ui/components/input";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@workspace/open-api/schemas/auth.schemas";
+import axios, { AxiosError } from "axios";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export const LoginForm = () => {
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -21,8 +24,27 @@ export const LoginForm = () => {
       password: "",
     },
   });
+  const login = async (data: z.input<typeof loginSchema>) => {
+    const res = await axios.post(
+      `http://localhost:6001/api/v1/auth/login`,
+      data,
+      { withCredentials: true }
+    );
+    return res.data;
+  };
+  const loginMutation = useMutation({
+    mutationFn: login,
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (error: AxiosError) => {
+      toast.error("Error", {
+        description: `${(error.response?.data as { message?: string }).message || "Invalid credentials"}`,
+      });
+    },
+  });
   function onSubmit(data: z.input<typeof loginSchema>) {
-    console.log(data);
+    loginMutation.mutate(data);
   }
   return (
     <AuthLayout className="max-w-lg">
@@ -60,6 +82,7 @@ export const LoginForm = () => {
                     aria-invalid={fieldState.invalid}
                     placeholder="******"
                     autoComplete="off"
+                    type="password"
                   />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
