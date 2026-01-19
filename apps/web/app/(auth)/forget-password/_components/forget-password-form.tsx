@@ -16,8 +16,6 @@ import { UpdatePasswordForm } from "../../_components/update-password-form";
 export const ForgetPasswordForm = () => {
   const [step, setStep] = useState<"email" | "otp" | "reset">("email");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [otp, setOtp] = useState("");
   const router = useRouter();
 
@@ -53,11 +51,7 @@ export const ForgetPasswordForm = () => {
       toast.success(data.message);
     },
     onError: (error) => {
-      const errorMessage =
-        error.message ||
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (error as any).errors?.[0]?.message ||
-        "An error occurred";
+      const errorMessage = error.message;
       toast.error(errorMessage);
     },
   });
@@ -70,6 +64,8 @@ export const ForgetPasswordForm = () => {
           onSubmit={() => getEmailMutation.mutate({ email })}
           disabled={false}
           onEmailChange={setEmail}
+          headerTitle="Lost your key? Let’s get you back inside."
+          headerDesc="Type in your email and we’ll help you create a fresh password so you can get back to the good stuff."
         />
       ) : step === "otp" ? (
         <EmailOtpVerification
@@ -80,18 +76,9 @@ export const ForgetPasswordForm = () => {
         />
       ) : (
         <UpdatePasswordForm
-          password={password}
-          setPassword={setPassword}
-          confirmPassword={confirmPassword}
-          setConfirmPassword={setConfirmPassword}
-          onSubmit={() =>
-            resetPasswordMutation.mutate({
-              email,
-              otp,
-              password,
-              confirmPassword,
-            })
-          }
+          email={email}
+          otp={otp}
+          onSubmit={(data) => resetPasswordMutation.mutate(data)}
           loading={resetPasswordMutation.isPending}
         />
       )}

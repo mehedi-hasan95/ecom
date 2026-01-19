@@ -40,8 +40,8 @@ export const EmailOtpVerification = ({
   };
   return (
     <AuthLayout
-      title="Verify Your Account"
-      description="Enter the 6-digit verification code sent to your email"
+      title="Secure Verification"
+      description="To keep your account safe, we just sent a one-time code to your inbox."
       showFooter={false}
       backButtonLink=""
       backButtonText=""

@@ -10,6 +10,8 @@ interface Props {
   onSubmit: () => void;
   disabled?: boolean;
   onEmailChange?: (value: string) => void;
+  headerTitle?: string;
+  headerDesc?: string;
 }
 export const EmailVerificationForm = ({
   email,
@@ -17,14 +19,16 @@ export const EmailVerificationForm = ({
   onSubmit,
   disabled = true,
   onEmailChange,
+  headerTitle = "Verification Email",
+  headerDesc = "Verify you email to create your account",
 }: Props) => {
   return (
     <AuthLayout
       backButtonLink=""
       backButtonText=""
-      description="Verify you email to create your account"
+      description={headerDesc}
       showFooter={false}
-      title="Verification Email"
+      title={headerTitle}
       className="max-w-md"
     >
       <div className="space-y-3">
