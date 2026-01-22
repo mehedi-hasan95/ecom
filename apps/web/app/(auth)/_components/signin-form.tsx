@@ -111,7 +111,9 @@ export const SignInForm = () => {
               )}
             />
             <Link href={"/forget-password"}>
-              <Button variant={"link"}>Forget Password?</Button>
+              <Button variant={"link"} type="button">
+                Forget Password?
+              </Button>
             </Link>
           </div>
         </FieldGroup>

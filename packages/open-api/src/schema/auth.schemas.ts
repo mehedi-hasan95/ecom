@@ -60,7 +60,7 @@ export const loginSchema = z.object({
   password: z
     .string({ message: "Password is required" })
     .openapi({ example: "123456" }),
-  rememberMe: z.boolean().default(true),
+  rememberMe: z.boolean().optional().default(true).openapi({ example: true }),
 });
 
 export const emailVerificationSchema = z.object({

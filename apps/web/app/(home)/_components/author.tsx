@@ -1,3 +1,4 @@
+"use client";
 import {
   Avatar,
   AvatarFallback,
@@ -13,15 +14,26 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu";
-import { LogoutButton } from "./logout-button";
+import Link from "next/link";
+import { useGetSession, useLogout } from "@/hooks/use-auth";
+import { LoadingButton } from "@/components/common/loading-button";
 
 export const Author = () => {
+  const { user } = useGetSession();
+  const initials = user?.name
+    .split(" ")
+    .map((w) => w.charAt(0).toUpperCase())
+    .join("");
+  const { mutate, isPending } = useLogout();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="cursor-pointer">
-          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarImage
+            src={user?.image || "https://github.com/shadcn.png"}
+            alt={user?.name}
+          />
+          <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="start">
@@ -41,10 +53,27 @@ export const Author = () => {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-
-        <DropdownMenuItem>
-          <LogoutButton />
-          <DropdownMenuShortcut>⇧⌘L</DropdownMenuShortcut>
+        <DropdownMenuLabel>My Dashboard</DropdownMenuLabel>
+        <DropdownMenuGroup>
+          <Link href={"/dashboard"}>
+            <DropdownMenuItem>
+              Dashboard
+              <DropdownMenuShortcut>⇧⌘D</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </Link>
+        </DropdownMenuGroup>
+        <DropdownMenuItem
+          className={`w-full flex justify-between disabled:${isPending}`}
+          onClick={() => mutate()}
+        >
+          {isPending ? (
+            <LoadingButton />
+          ) : (
+            <>
+              Log Out
+              <DropdownMenuShortcut>⇧⌘L</DropdownMenuShortcut>
+            </>
+          )}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

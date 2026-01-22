@@ -1,13 +1,23 @@
-import { sessionAction } from "@/lib/actions/auth-server-action";
+"use client";
 import Link from "next/link";
 import { Author } from "./author";
+import { useQuery } from "@tanstack/react-query";
+import { sessionAction } from "@/lib/actions/auth-server-action";
 
-export const Navigation = async () => {
-  const data = await sessionAction();
+export const Navigation = () => {
+  const { data, isLoading } = useQuery({
+    queryKey: ["sessions"],
+    queryFn: sessionAction,
+  });
   return (
     <div className="flex gap-5 items-center">
-      <Link href={"/"}>Something</Link>
-      {data?.success ? <Author /> : <Link href={"/sign-in"}>Sign In</Link>}
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : data?.success ? (
+        <Author />
+      ) : (
+        <Link href={"/sign-in"}>Sign In</Link>
+      )}
     </div>
   );
 };

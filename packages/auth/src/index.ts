@@ -1,11 +1,18 @@
+import { stripe } from "@better-auth/stripe";
 import { prisma } from "@workspace/db";
 import redis from "@workspace/redis";
-import { betterAuth } from "better-auth";
+import { betterAuth, BetterAuthOptions } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
-import { emailOTP } from "better-auth/plugins";
+import { customSession, emailOTP } from "better-auth/plugins";
+import Stripe from "stripe";
 
-export const auth = betterAuth({
+export const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2025-12-15.clover",
+  typescript: true,
+});
+
+const options = {
   baseURL: process.env.BETTER_AUTH_URL,
 
   database: prismaAdapter(prisma, {
@@ -19,6 +26,11 @@ export const auth = betterAuth({
   },
 
   plugins: [
+    stripe({
+      stripeClient,
+      stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
+      createCustomerOnSignUp: true,
+    }),
     emailOTP({
       async sendVerificationOTP({ email, otp, type }) {
         if (type === "email-verification") {
@@ -58,6 +70,11 @@ export const auth = betterAuth({
         required: false,
         defaultValue: undefined,
       },
+      stripeVerified: {
+        type: "boolean",
+        required: false,
+        defaultValue: false,
+      },
     },
   },
   secondaryStorage: {
@@ -76,4 +93,24 @@ export const auth = betterAuth({
     },
   },
   trustedOrigins: ["http://localhost:3000", "http://localhost:6001"],
+} satisfies BetterAuthOptions;
+
+export const auth = betterAuth({
+  ...options,
+  plugins: [
+    ...(options.plugins ?? []),
+    customSession(async ({ user, session }, ctx) => {
+      return {
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          image: user.image,
+          role: user.role,
+          stripeVerified: user.stripeVerified,
+        },
+        session: { token: session.token },
+      };
+    }, options),
+  ],
 });

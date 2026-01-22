@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
+    "@better-auth/stripe": "^1.4.17",
+    "@workspace/db": "workspace:*",
+    "@workspace/redis": "workspace:*",
     "better-auth": "^1.4.13",
     "dotenv": "^17.2.3",
-    "@workspace/db": "workspace:*",
-    "@workspace/redis": "workspace:*"
+    "stripe": "^20.0.0"
   },
   "devDependencies": {
     "@workspace/typescript-config": "workspace:*"

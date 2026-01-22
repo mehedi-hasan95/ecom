@@ -85,6 +85,7 @@ export const RegistrationForm = () => {
   });
 
   function onSubmit(data: z.input<typeof registrationSchema>) {
+    console.log(data);
     registrationMutation.mutate(data);
   }
   return (

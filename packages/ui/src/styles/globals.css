@@ -128,3 +128,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .container-default {
+    @apply container mx-auto px-4;
+  }
+}

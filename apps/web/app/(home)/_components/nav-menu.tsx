@@ -1,11 +1,13 @@
-import { Logo } from "@/components/common/logo";
-import { Navigation } from "./navigation";
+import { NavHeader } from "./nav-header";
+import { NavSeconderyMenu } from "./nav-secondery-menu";
 
 export const NavMenu = () => {
   return (
-    <div className="flex justify-between">
-      <Logo />
-      <Navigation />
-    </div>
+    <nav className="bg-card border-b border-border">
+      <div className="container-default">
+        <NavHeader />
+        <NavSeconderyMenu />
+      </div>
+    </nav>
   );
 };

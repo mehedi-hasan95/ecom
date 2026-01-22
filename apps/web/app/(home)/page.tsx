@@ -1,10 +1,11 @@
+import { Footer } from "./_components/footer";
 import { NavMenu } from "./_components/nav-menu";
 
 export default function Page() {
   return (
-    <div className="flex flex-col justify-between container mx-auto px-5 min-h-screen">
+    <div className="flex flex-col justify-between min-h-screen">
       <NavMenu />
-      Mehedi
+      <Footer />
     </div>
   );
 }
