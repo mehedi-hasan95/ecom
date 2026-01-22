@@ -3,6 +3,7 @@
 import { User } from "@workspace/db";
 import { cookies, headers } from "next/headers";
 
+//
 export const sessionAction = async () => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_AUTH_URL}/auth/session`,
