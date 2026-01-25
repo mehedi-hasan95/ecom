@@ -1,16 +1,10 @@
-import { stripe } from "@better-auth/stripe";
 import { prisma } from "@workspace/db";
 import redis from "@workspace/redis";
 import { betterAuth, BetterAuthOptions } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { customSession, emailOTP } from "better-auth/plugins";
-import Stripe from "stripe";
-
-export const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-12-15.clover",
-  typescript: true,
-});
+import { sendVerificationEmail } from "./send-email/send-verification-email";
 
 const options = {
   baseURL: process.env.BETTER_AUTH_URL,
@@ -26,16 +20,13 @@ const options = {
   },
 
   plugins: [
-    stripe({
-      stripeClient,
-      stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-      createCustomerOnSignUp: true,
-    }),
     emailOTP({
       async sendVerificationOTP({ email, otp, type }) {
         if (type === "email-verification") {
-          // todo: add email to send email
-          console.log(otp);
+          await sendVerificationEmail("verification", email, otp);
+        }
+        if (type === "forget-password") {
+          await sendVerificationEmail("reset", email, otp);
         }
       },
       disableSignUp: false,
