@@ -11,7 +11,15 @@ export async function proxy(request: NextRequest) {
 
   if (
     pathname.startsWith("/dashboard/vendor") &&
-    session.user.role !== "SELLER"
+    !["SELLER", "ADMIN"].includes(session.user.role)
+  ) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  // admin
+  if (
+    pathname.startsWith("/dashboard/admin") &&
+    session.user.role !== "ADMIN"
   ) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }

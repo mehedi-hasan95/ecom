@@ -1,22 +1,17 @@
 "use client";
 import { useGetSession } from "@/hooks/use-auth";
-import {
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@workspace/ui/components/sidebar";
+import { SidebarGroup } from "@workspace/ui/components/sidebar";
 import {
   BaggageClaim,
+  Guitar,
   IdCard,
   Landmark,
   LayoutDashboard,
   PackagePlus,
   ShoppingBasket,
+  UserCog,
 } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { DashboardSidebarMenus } from "./dashboard-sidebar-menus";
 
 const generalMenus = [
   { name: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
@@ -33,55 +28,28 @@ const vendorMenus = [
   },
   { name: "Orders", url: "/dashboard/vendor/orders", icon: BaggageClaim },
 ];
+
+const adminMenus = [
+  { name: "ADMIN", url: "/dashboard/admin", icon: UserCog },
+  { name: "Category", url: "/dashboard/admin/categories", icon: Guitar },
+];
 export const DashboardMainMenus = () => {
-  const pathName = usePathname();
   const { user } = useGetSession();
   return (
-    <SidebarGroup>
-      <SidebarGroupLabel>General</SidebarGroupLabel>
-      <SidebarMenu>
-        {generalMenus.map((item) => (
-          <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton
-              asChild
-              className={
-                pathName === item.url
-                  ? "bg-yellow-700 hover:bg-yellow-700 text-white"
-                  : "hover:bg-yellow-700"
-              }
-            >
-              <Link href={item.url}>
-                <item.icon />
-                <span>{item.name}</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        ))}
-      </SidebarMenu>
-      {user?.role === "SELLER" && (
-        <>
-          <SidebarGroupLabel>Vendors</SidebarGroupLabel>
-          <SidebarMenu>
-            {vendorMenus.map((item) => (
-              <SidebarMenuItem key={item.name}>
-                <SidebarMenuButton
-                  asChild
-                  className={
-                    pathName === item.url
-                      ? "bg-yellow-700 hover:bg-yellow-700 text-white"
-                      : "hover:bg-yellow-700"
-                  }
-                >
-                  <Link href={item.url}>
-                    <item.icon />
-                    <span>{item.name}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </>
-      )}
-    </SidebarGroup>
+    <>
+      <SidebarGroup>
+        <DashboardSidebarMenus menus={generalMenus} sidebarLabel="General" />
+      </SidebarGroup>
+      <SidebarGroup>
+        {(user?.role === "SELLER" || user?.role === "ADMIN") && (
+          <DashboardSidebarMenus menus={vendorMenus} sidebarLabel="Vendors" />
+        )}
+      </SidebarGroup>
+      <SidebarGroup>
+        {user?.role === "ADMIN" && (
+          <DashboardSidebarMenus menus={adminMenus} sidebarLabel="Vendors" />
+        )}
+      </SidebarGroup>
+    </>
   );
 };

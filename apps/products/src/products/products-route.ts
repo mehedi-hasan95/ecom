@@ -14,20 +14,25 @@ export const createProductRoute = createRoute({
   },
 });
 
+const fileSchema = z.any().openapi({
+  type: "string",
+  format: "binary",
+});
 export const uploadImageRoute = createRoute({
   method: "post",
   path: "/upload",
+  tags,
   request: {
     body: {
       content: {
         "multipart/form-data": {
           schema: z.object({
             title: z.string().min(1),
-            images: z.array(
-              z.any().openapi({
-                type: "string",
-                format: "binary",
-              }),
+
+            // 👇 Accept single OR multiple files, normalize to array
+            images: z.preprocess(
+              (val) => (Array.isArray(val) ? val : [val]),
+              z.array(fileSchema),
             ),
           }),
         },
@@ -36,6 +41,7 @@ export const uploadImageRoute = createRoute({
   },
   responses: {
     200: {
+      description: "Images uploaded successfully",
       content: {
         "application/json": {
           schema: z.object({
@@ -44,8 +50,9 @@ export const uploadImageRoute = createRoute({
           }),
         },
       },
-      description: "Product created successfully",
     },
-    500: { description: "Not ok" },
+    500: {
+      description: "Not ok",
+    },
   },
 });

@@ -1,0 +1,31 @@
+import { categorySchema } from "@workspace/open-api/schemas/admin.schamas";
+import z from "zod";
+
+export const createCategoryAction = async (
+  data: z.input<typeof categorySchema>,
+) => {
+  const formData = new FormData();
+
+  Object.entries(data).forEach(([key, value]) => {
+    if (key === "image" && value instanceof File) {
+      formData.append("image", value);
+    } else if (value !== undefined && value !== null) {
+      formData.append(key, String(value));
+    }
+  });
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_PRODUCTS_URL}/admin/create-category`,
+    {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+    },
+  );
+
+  if (!response.ok) {
+    throw await response.json();
+  }
+
+  return response.json();
+};

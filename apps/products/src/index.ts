@@ -7,7 +7,8 @@ import {
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
 import products from "./products/products-index";
-import upload from "./uploadthing/upload";
+import admin from "./admin/admin-index";
+import categories from "./categories/categories-index";
 
 const app = new OpenAPIHono({
   defaultHook,
@@ -21,7 +22,10 @@ app.use(
 );
 
 // RPC
-const routes = app.route("/products", products).route("/uploadthing", upload);
+const routes = app
+  .route("/products", products)
+  .route("/admin", admin)
+  .route("/categories", categories);
 
 app.onError((err, c) => {
   if (err instanceof HTTPException) {

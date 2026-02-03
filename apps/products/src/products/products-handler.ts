@@ -13,24 +13,39 @@ export const createProductHandler: RouteHandler<
   return c.json({ message: "OK" });
 };
 
+// export const uploadImageHandler: RouteHandler<typeof uploadImageRoute> = async (
+//   c,
+// ) => {
+//   const formData = await c.req.formData();
+
+//   const title = formData.get("title");
+//   const images = formData.getAll("images") as File[];
+
+//   console.log(images);
+//   // const uploadedImages = await utapi.uploadFiles(images);
+
+//   // const imageUrls = uploadedImages.map((img) => ({
+//   //   url: img.data?.ufsUrl,
+//   //   key: img.data?.key,
+//   // }));
+
+//   // console.log(imageUrls);
+
+//   // console.log("title:", title);
+//   // console.log("images:", images);
+//   return c.json({ message: "OK" });
+// };
+
 export const uploadImageHandler: RouteHandler<typeof uploadImageRoute> = async (
   c,
 ) => {
-  const formData = await c.req.formData();
-
-  const title = formData.get("title");
-  const images = formData.getAll("images") as File[];
-
+  const { images, title } = await c.req.valid("form");
   const uploadedImages = await utapi.uploadFiles(images);
-
   const imageUrls = uploadedImages.map((img) => ({
     url: img.data?.ufsUrl,
     key: img.data?.key,
   }));
 
   console.log(imageUrls);
-
-  console.log("title:", title);
-  console.log("images:", images);
   return c.json({ message: "OK" });
 };
