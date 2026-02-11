@@ -1,6 +1,6 @@
 "use client";
 
-import { ImageUploader } from "@/app/dashboard/vendor/create-product/_components/image-uploader";
+import { ImageUploader } from "@/app/dashboard/vendor/products/[id]/_components/image-uploader";
 import { LoadingButton } from "@/components/common/loading-button";
 import {
   createCategoryAction,

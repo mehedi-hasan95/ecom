@@ -8,7 +8,13 @@ export const getCategoriesAction = async () => {
     const error = await response.json();
     throw error;
   }
-  const data: { categories: Category[] } = await response.json();
+  const data: {
+    categories: (Category & {
+      _count: {
+        subCategories: number;
+      };
+    })[];
+  } = await response.json();
   return { categories: data.categories };
 };
 
@@ -30,10 +36,17 @@ export const getCategoryAction = async (category: string) => {
   return response.json();
 };
 
-export const getSubCategoriesAction = async () => {
-  const response = await fetch(
+export const getSubCategoriesAction = async (categorySlug?: string) => {
+  const url = new URL(
     `${process.env.NEXT_PUBLIC_PRODUCTS_URL}/categories/categories/sub-categories`,
   );
+
+  if (categorySlug) {
+    url.searchParams.set("categorySlug", categorySlug);
+  }
+  const response = await fetch(url.toString(), {
+    method: "GET",
+  });
   if (!response.ok) {
     const error = await response.json();
     throw error;

@@ -1,6 +1,6 @@
 export const stripeConnectAction = async () => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_AUTH_URL}/stripe/connect`,
+    `${process.env.NEXT_PUBLIC_PAYMENT_URL}/stripe/connect`,
     {
       method: "POST",
       headers: {

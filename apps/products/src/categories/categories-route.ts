@@ -6,6 +6,7 @@ export const getCategoriesRoute = createRoute({
   path: "/",
   summary: "Get Categories",
   tags,
+
   responses: {
     200: { description: "OK" },
     500: { description: "Internal server error" },
@@ -35,6 +36,9 @@ export const getSubCategoriesRoute = createRoute({
   path: "/categories/sub-categories",
   summary: "Get Sub Categories",
   tags,
+  request: {
+    query: z.object({ categorySlug: z.string().optional() }),
+  },
   responses: {
     200: { description: "OK" },
     500: { description: "Internal server error" },

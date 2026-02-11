@@ -25,7 +25,7 @@ import Link from "next/link";
 export const SubCategoryPage = () => {
   const { data } = useQuery({
     queryKey: ["subCategories"],
-    queryFn: getSubCategoriesAction,
+    queryFn: () => getSubCategoriesAction(""),
   });
   const queryClient = useQueryClient();
   const deleteMutation = useMutation({

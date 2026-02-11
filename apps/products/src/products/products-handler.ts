@@ -1,22 +1,21 @@
 import { RouteHandler } from "@hono/zod-openapi";
-import { createProductRoute, uploadImageRoute } from "./products-route";
+import { createProductRoute } from "./products-route";
 import { utapi } from "@workspace/uploadthing";
+import { prisma } from "@workspace/db";
 
 export const createProductHandler: RouteHandler<
   typeof createProductRoute
 > = async (c) => {
-  return c.json({ message: "OK" });
-};
+  const data = await c.req.valid("form");
+  const uploadedImages = await utapi.uploadFiles(data.images);
 
-export const uploadImageHandler: RouteHandler<typeof uploadImageRoute> = async (
-  c,
-) => {
-  const { images, title } = await c.req.valid("form");
-  const uploadedImages = await utapi.uploadFiles(images);
-  const imageUrls = uploadedImages.map((img) => ({
-    url: img.data?.ufsUrl,
-    key: img.data?.key,
-  }));
+  const imageLinks = uploadedImages.map((item) => item.data?.ufsUrl);
+  await prisma.products.create({
+    data: {
+      ...data,
+      images: imageLinks as string[],
+    },
+  });
 
-  return c.json({ message: "OK" });
+  return c.json({ message: "Product created successfully" }, 201);
 };

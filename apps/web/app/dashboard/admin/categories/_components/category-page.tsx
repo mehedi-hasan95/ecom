@@ -132,7 +132,9 @@ export const CategoryPage = () => {
                       <p className="text-xs text-muted-foreground uppercase tracking-wide">
                         Items
                       </p>
-                      <p className="text-2xl font-bold text-primary">48</p>
+                      <p className="text-2xl font-bold text-primary">
+                        {category._count.subCategories}
+                      </p>
                     </div>
                     <div className="text-right">
                       <p className="text-xs text-muted-foreground uppercase tracking-wide">

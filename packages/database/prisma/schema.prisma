@@ -95,18 +95,61 @@ model Category {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   subCategories SubCategories[]
+  products      Products[]
 
   @@index([slug])
 }
 
 model SubCategories {
-  id           String   @id @default(uuid())
+  id           String     @id @default(uuid())
   name         String
-  slug         String   @unique
+  slug         String     @unique
   categorySlug String
-  category     Category @relation(fields: [categorySlug], references: [slug], onDelete: Cascade)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  category     Category   @relation(fields: [categorySlug], references: [slug], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  products     Products[]
 
   @@index([slug])
+}
+
+enum ProductType {
+  physical
+  digital
+  service
+}
+
+enum ProductStatus {
+  draft
+  active
+  archived
+}
+
+model Products {
+  id               String        @id @default(cuid())
+  title            String
+  shortDescription String
+  basePrice        Float
+  salePrice        Float
+  stock            Int
+  tags             String[]
+  weight           Float?
+  type             ProductType   @default(physical)
+  status           ProductStatus @default(draft)
+  images           String[]
+  categorySlug     String
+  category         Category      @relation(fields: [categorySlug], references: [slug], onDelete: Cascade)
+  subCategorySlug  String
+  subCategory      SubCategories @relation(fields: [subCategorySlug], references: [slug], onDelete: Cascade)
+  color            String[]
+  specification    Json?
+  description      String
+  cashOnDelevary   Boolean       @default(false)
+  cupon            String?
+  sizes            String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id])
 }

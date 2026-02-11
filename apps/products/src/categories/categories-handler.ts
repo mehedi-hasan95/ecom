@@ -10,7 +10,9 @@ import { prisma } from "@workspace/db";
 export const getCategoriesHandler: RouteHandler<
   typeof getCategoriesRoute
 > = async (c) => {
-  const categories = await prisma.category.findMany();
+  const categories = await prisma.category.findMany({
+    include: { _count: { select: { subCategories: true } } },
+  });
   return c.json({ categories }, 200);
 };
 
@@ -30,7 +32,10 @@ export const getCategoryHandler: RouteHandler<typeof getCategoryRoute> = async (
 export const getSubCategoriesHandler: RouteHandler<
   typeof getSubCategoriesRoute
 > = async (c) => {
-  const subCategories = await prisma.subCategories.findMany();
+  const { categorySlug } = c.req.valid("query");
+  const subCategories = await prisma.subCategories.findMany({
+    where: { categorySlug: categorySlug || undefined },
+  });
   return c.json({ subCategories }, 200);
 };
 

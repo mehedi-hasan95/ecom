@@ -23,8 +23,8 @@ const generalMenus = [
 const vendorMenus = [
   { name: "Vendor", url: "/dashboard/vendor", icon: ShoppingBasket },
   {
-    name: "Create Product",
-    url: "/dashboard/vendor/create-product",
+    name: "Products",
+    url: "/dashboard/vendor/products",
     icon: PackagePlus,
   },
   { name: "Orders", url: "/dashboard/vendor/orders", icon: BaggageClaim },

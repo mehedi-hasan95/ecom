@@ -134,3 +134,9 @@
     @apply container mx-auto px-4;
   }
 }
+
+.mehedi .ql-editor {
+  max-height: 350px;
+  min-height: 180px;
+  margin-bottom: 10px;
+}
