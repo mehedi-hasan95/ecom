@@ -111,3 +111,19 @@ export const createProductRoute = createRoute({
     },
   },
 });
+
+export const getProductsRoute = createRoute({
+  method: "get",
+  path: "/all-products",
+  tags,
+  summary: "Get all products",
+  description:
+    "The seller can get their products by using their email, alongside all products.",
+  request: {
+    query: z.object({ userEmail: z.string().optional() }),
+  },
+  responses: {
+    200: { description: "All products" },
+    500: { description: "Internal server error" },
+  },
+});

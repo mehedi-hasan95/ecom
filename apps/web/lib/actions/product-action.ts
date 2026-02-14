@@ -1,3 +1,4 @@
+import { Products } from "@workspace/db";
 import { productCreateSchema } from "@workspace/open-api/schemas/product.schemas";
 import z from "zod";
 
@@ -33,4 +34,27 @@ export const productCreateAction = async (
   }
 
   return response.json();
+};
+
+export const getAllProductsAction = async (userEmail?: string) => {
+  const url = new URL(
+    `${process.env.NEXT_PUBLIC_PRODUCTS_URL}/products/all-products`,
+  );
+
+  if (userEmail) {
+    url.searchParams.set("userEmail", userEmail);
+  }
+  const response = await fetch(url.toString(), {
+    method: "GET",
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw error;
+  }
+  const data: {
+    products: (Products & {
+      user: { id: string; image: string; name: string };
+    })[];
+  } = await response.json();
+  return { products: data.products };
 };

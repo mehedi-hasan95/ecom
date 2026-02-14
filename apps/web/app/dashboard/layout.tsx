@@ -5,18 +5,11 @@ import {
   SidebarTrigger,
 } from "@workspace/ui/components/sidebar";
 import { DashboardMenus } from "./_components/dashboard-menus";
-import getQueryClient from "@/lib/query-client";
-import { getCategoriesAction } from "@/lib/actions/category/category-action";
 
 interface Props {
   children: React.ReactNode;
 }
 const Page = async ({ children }: Props) => {
-  const queryClient = getQueryClient();
-  await queryClient.prefetchQuery({
-    queryKey: ["categories"],
-    queryFn: getCategoriesAction,
-  });
   return (
     <div className="container-default">
       <SidebarProvider>

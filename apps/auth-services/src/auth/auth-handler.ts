@@ -12,6 +12,7 @@ import {
 } from "./auth-routes";
 import { auth } from "@workspace/auth/server";
 import { prisma } from "@workspace/db";
+import { utapi } from "@workspace/uploadthing";
 
 export const registrationHandler: RouteHandler<
   typeof registrationRoute

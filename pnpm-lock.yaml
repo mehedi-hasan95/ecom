@@ -47,6 +47,9 @@ importers:
       '@workspace/redis':
         specifier: workspace:*
         version: link:../../packages/redis
+      '@workspace/uploadthing':
+        specifier: workspace:*
+        version: link:../../packages/uploadthing
       dotenv:
         specifier: ^17.2.3
         version: 17.2.3

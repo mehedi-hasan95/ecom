@@ -6,6 +6,7 @@ import {
   resetPasswordSchema,
   verifyRegistrationEmailSchema,
 } from "@workspace/open-api/schemas/auth.schemas";
+import { sellerMiddleware } from "../middleware";
 
 const tags = ["Authentication"];
 export const registrationRoute = createRoute({

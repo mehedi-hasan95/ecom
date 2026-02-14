@@ -33,7 +33,8 @@ model User {
   accounts      Account[]
 
   stripeCustomerId String?
-  stripeVerified   Boolean @default(false)
+  stripeVerified   Boolean    @default(false)
+  products         Products[]
 
   @@unique([email])
   @@map("user")
@@ -147,6 +148,8 @@ model Products {
   cashOnDelevary   Boolean       @default(false)
   cupon            String?
   sizes            String[]
+  userEmail        String
+  user             User          @relation(fields: [userEmail], references: [email], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
