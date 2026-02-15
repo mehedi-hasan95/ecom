@@ -1,5 +1,9 @@
 import { RouteHandler } from "@hono/zod-openapi";
-import { createProductRoute, getProductsRoute } from "./products-route";
+import {
+  createProductRoute,
+  getProductsRoute,
+  getSingleProductRoute,
+} from "./products-route";
 import { utapi } from "@workspace/uploadthing";
 import { prisma } from "@workspace/db";
 
@@ -32,4 +36,26 @@ export const getProductsHandler: RouteHandler<typeof getProductsRoute> = async (
   });
 
   return c.json({ products }, 200);
+};
+
+export const getSingleProductHandler: RouteHandler<
+  typeof getSingleProductRoute
+> = async (c) => {
+  const { id } = c.req.valid("query");
+  const data = await prisma.products.findUnique({
+    where: { id },
+    include: {
+      user: {
+        select: {
+          email: true,
+          name: true,
+          image: true,
+          id: true,
+          stripeCustomerId: true,
+        },
+      },
+    },
+  });
+
+  return c.json({ product: data }, 200);
 };

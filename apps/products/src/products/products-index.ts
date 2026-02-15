@@ -1,7 +1,15 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { defaultHook } from "@workspace/open-api/lib/open-api-configuration";
-import { createProductRoute, getProductsRoute } from "./products-route";
-import { createProductHandler, getProductsHandler } from "./products-handler";
+import {
+  createProductRoute,
+  getProductsRoute,
+  getSingleProductRoute,
+} from "./products-route";
+import {
+  createProductHandler,
+  getProductsHandler,
+  getSingleProductHandler,
+} from "./products-handler";
 
 const app = new OpenAPIHono({
   defaultHook: defaultHook,
@@ -9,6 +17,7 @@ const app = new OpenAPIHono({
 
 app
   .openapi(createProductRoute, createProductHandler)
-  .openapi(getProductsRoute, getProductsHandler);
+  .openapi(getProductsRoute, getProductsHandler)
+  .openapi(getSingleProductRoute, getSingleProductHandler);
 
 export default app;

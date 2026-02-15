@@ -35,8 +35,8 @@ export const SwitchController = <T extends FieldValues>({
           <Switch
             id={name}
             name={field.name}
-            checked={field.value}
-            onCheckedChange={field.onChange}
+            checked={!!field.value}
+            onCheckedChange={(checked) => field.onChange(!!checked)}
             aria-invalid={fieldState.invalid}
           />
         </Field>

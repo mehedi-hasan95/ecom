@@ -46,7 +46,7 @@ export const ColorSelector = ({ name, control }: ColorSelectorProps) => {
       render={({ field, fieldState }) => (
         <Field data-invalid={fieldState.invalid}>
           <FieldLabel htmlFor={`create-product-${name}`}>
-            Products Colors
+            Products Colors (optional)
           </FieldLabel>
 
           <div className="flex flex-wrap gap-3 items-center">

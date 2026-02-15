@@ -50,7 +50,7 @@ export const ProductCard = ({
           alt=""
           height={500}
           width={500}
-          className="h-full w-full pt-5"
+          className="aspect-video pt-5"
         />
         <div className="py-4">
           <div className="flex flex-col items-center justify-center">
@@ -64,14 +64,15 @@ export const ProductCard = ({
             {colors ? (
               <div className="flex flex-col items-center">
                 <p>Color</p>
-                {colors.map((item) => (
-                  <div className="flex gap-2" key={item}>
+                <div className="flex gap-2">
+                  {colors.map((item) => (
                     <div
+                      key={item}
                       className="w-6 h-6 rounded-full border"
                       style={{ backgroundColor: item }}
                     />
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             ) : (
               "No color"

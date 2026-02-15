@@ -172,7 +172,7 @@ export const CreateCategory = ({ initialData }: Props) => {
             </Field>
             {initialData?.image && form.watch("previousImage") && (
               <Controller
-                name="slug"
+                name="previousImage"
                 control={form.control}
                 render={({ fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>

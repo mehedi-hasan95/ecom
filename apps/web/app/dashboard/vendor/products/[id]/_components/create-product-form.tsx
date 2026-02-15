@@ -22,7 +22,7 @@ import {
 } from "@workspace/ui/components/field";
 import { Button } from "@workspace/ui/components/button";
 import { ImageUploader } from "./image-uploader";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getCategoriesAction,
   getSubCategoriesAction,
@@ -44,10 +44,23 @@ import { RichTextEditor } from "./rich-text-editor";
 import { SwitchController } from "@/components/common/form/switch-contoller";
 import { SelectController } from "@/components/common/form/select-controller";
 import { SizeSelector } from "./size-selector";
-import { productCreateAction } from "@/lib/actions/product-action";
+import {
+  productCreateAction,
+  productUpdateAction,
+} from "@/lib/actions/product-action";
 import { LoadingButton } from "@/components/common/loading-button";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useGetSession } from "@/hooks/use-auth";
+import { Products } from "@workspace/db";
+import Image from "next/image";
 
-export const CreateProductForm = () => {
+interface Props {
+  initialData: Products | null;
+}
+export const CreateProductForm = ({ initialData }: Props) => {
+  const router = useRouter();
+  const { user } = useGetSession();
   const deliveryType = ["physical", "digital", "service"];
   const productStatus = ["draft", "active", "archived"];
   const { data } = useQuery({
@@ -63,27 +76,34 @@ export const CreateProductForm = () => {
     resolver: zodResolver(productCreateSchema),
     mode: "onChange",
     defaultValues: {
-      title: "",
+      title: initialData?.title || "",
       images: [],
-      categorySlug: "",
-      subCategorySlug: "",
-      shortDescription: "",
-      basePrice: undefined,
-      salePrice: undefined,
-      stock: undefined,
-      weight: undefined,
-      tags: [],
-      color: [],
-      specification: [],
-      description: "",
-      cashOnDelevary: false,
-      cupon: "",
-      type: "physical",
-      status: "draft",
-      sizes: [],
+      previousImage: initialData?.images || undefined,
+      categorySlug: initialData?.categorySlug || "",
+      subCategorySlug: initialData?.subCategorySlug || "",
+      shortDescription: initialData?.shortDescription || "",
+      basePrice: initialData?.basePrice || undefined,
+      salePrice: initialData?.salePrice || undefined,
+      stock: initialData?.stock || undefined,
+      weight: initialData?.weight || undefined,
+      tags: initialData?.tags || [],
+      color: initialData?.color || [],
+      specification:
+        (initialData?.specification as { key: string; value: string }[]) ?? [],
+      description: initialData?.description || "",
+      cashOnDelevary: initialData?.cashOnDelevary || false,
+      cupon: initialData?.cupon || "",
+      type: initialData?.type || "physical",
+      status: initialData?.status || "draft",
+      sizes: initialData?.sizes || [],
     },
   });
   const selectedCat = form.watch("categorySlug");
+  const prevImage = form.watch("previousImage");
+  const handleDelete = (index: number) => {
+    const updated = prevImage?.filter((_, i) => i !== index);
+    form.setValue("previousImage", updated, { shouldValidate: true });
+  };
   useEffect(() => {
     form.setValue("subCategorySlug", "");
   }, [selectedCat, form]);
@@ -104,14 +124,31 @@ export const CreateProductForm = () => {
   });
 
   //create product
-
+  const queryClient = useQueryClient();
   const createMutation = useMutation({
     mutationFn: productCreateAction,
-    onSuccess: (data) => console.log(data),
-    onError: (error) => console.log(error),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products", user?.email] });
+      toast.success("Product create successfully");
+      router.push("/dashboard/vendor/products");
+    },
+    onError: (error) => toast.error(error.message),
+  });
+  const updateMutation = useMutation({
+    mutationFn: productUpdateAction,
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
   });
   async function onSubmit(data: z.input<typeof productCreateSchema>) {
-    createMutation.mutate(data);
+    if (initialData) {
+      updateMutation.mutate({ id: initialData.id, ...data });
+    } else {
+      createMutation.mutate(data);
+    }
   }
   return (
     <Card>
@@ -134,7 +171,53 @@ export const CreateProductForm = () => {
                 placeholder="Slim handmade wallet crafted from genuine leather"
                 title=" Write a short description"
               />
-
+              {initialData?.images.length && (
+                <Controller
+                  name="previousImage"
+                  control={form.control}
+                  render={({ fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor="form-rhf-demo-previousImage">
+                        Previous Image
+                      </FieldLabel>
+                      <div style={{ display: "flex", gap: 16 }}>
+                        {prevImage?.map((img, index) => (
+                          <div key={index} style={{ position: "relative" }}>
+                            <Image
+                              src={img}
+                              alt={`preview-${index}`}
+                              width={120}
+                              height={120}
+                              style={{ objectFit: "cover", borderRadius: 8 }}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(index)}
+                              style={{
+                                position: "absolute",
+                                top: 5,
+                                right: 5,
+                                background: "red",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "50%",
+                                width: 24,
+                                height: 24,
+                                cursor: "pointer",
+                              }}
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
+                />
+              )}
               <Controller
                 name="images"
                 control={form.control}
@@ -156,6 +239,7 @@ export const CreateProductForm = () => {
                   </Field>
                 )}
               />
+
               <div className="grid md:grid-cols-2 gap-5">
                 <Controller
                   name="categorySlug"
@@ -208,7 +292,7 @@ export const CreateProductForm = () => {
                 <InputController
                   name="weight"
                   control={form.control}
-                  title="Total Weight"
+                  title="Total Weight (optional)"
                   placeholder="e.g. 0.3"
                 />
               </div>
@@ -217,12 +301,14 @@ export const CreateProductForm = () => {
               <TagsController
                 control={form.control}
                 name="tags"
-                title="Product Tags"
+                title="Product Tags (optional)"
                 placeholder="e.g. Organic"
               />
               <ColorSelector control={form.control} name="color" />
               <FieldSet className="gap-4">
-                <FieldLegend variant="label">Custom Specification</FieldLegend>
+                <FieldLegend variant="label">
+                  Custom Specification (optional)
+                </FieldLegend>
                 <FieldGroup className="gap-4">
                   {fields.map((field, index) => (
                     <div className="flex gap-2" key={field.id}>
@@ -312,7 +398,10 @@ export const CreateProductForm = () => {
                     <FieldLabel htmlFor="form-rhf-demo-desc">
                       Product Description
                     </FieldLabel>
-                    <RichTextEditor onChange={field.onChange} />
+                    <RichTextEditor
+                      onChange={field.onChange}
+                      value={field.value}
+                    />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
