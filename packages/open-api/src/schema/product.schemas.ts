@@ -19,10 +19,12 @@ export const productCreateSchema = z
           message: "Only image files are allowed",
         }),
       )
-      .min(1, "At least one image is required")
+      // .min(1, "At least one image is required")
       .max(5, "You can't add more then 5 images")
+      .optional()
       .refine(
         (files) =>
+          files &&
           files.reduce((total, file) => total + file.size, 0) <= MAX_TOTAL_SIZE,
         {
           message: "Total image size must be less than 16MB",
@@ -62,10 +64,23 @@ export const productCreateSchema = z
     sizes: z.array(z.string()).optional(),
   })
   .superRefine((data, ctx) => {
-    const totalCount = data.images.length + (data?.previousImage?.length ?? 0);
+    const newImagesCount = data.images?.length ?? 0;
+    const previousImagesCount = data?.previousImage?.length ?? 0;
+    const totalCount = newImagesCount + previousImagesCount;
+
+    // ✅ Require at least one image
+    if (totalCount === 0) {
+      ctx.addIssue({
+        path: ["images"],
+        code: customError,
+        message: "Please add at least one image",
+      });
+      return; // stop further validation
+    }
+
+    // ✅ Max 5 images rule
     if (totalCount > 5) {
-      // If previous images exist, force user to remove them first
-      if ((data?.previousImage?.length ?? 0) > 0) {
+      if (previousImagesCount > 0) {
         ctx.addIssue({
           path: ["images"],
           code: customError,
@@ -75,7 +90,7 @@ export const productCreateSchema = z
         ctx.addIssue({
           path: ["images"],
           code: customError,
-          message: `You can upload at most ${5} images`,
+          message: "You can upload at most 5 images",
         });
       }
     }
@@ -83,17 +98,25 @@ export const productCreateSchema = z
 
 export const updateProductSchema = productCreateSchema.extend({
   id: z.string(),
+  sellerEmail: z.string(),
 });
-// for zod-openAPI
+
+/**
+ * ============================================================
+ * 📌 Schema: Product for server
+ * ============================================================
+ */
 export const productSchemasForserver = z
   .object({
     title: z.string().min(1),
 
     // 👇 Accept single OR multiple files, normalize to array
-    images: z.preprocess(
-      (val) => (Array.isArray(val) ? val : [val]),
-      z.array(z.any()),
-    ),
+    images: z
+      .preprocess(
+        (val) => (Array.isArray(val) ? val : [val]),
+        z.array(z.any().optional()),
+      )
+      .optional(),
     previousImage: z.preprocess(
       (val) => (Array.isArray(val) ? val : [val]),
       z.array(z.string()).optional(),
@@ -160,7 +183,16 @@ export const productSchemasForserver = z
     status: z.enum(["draft", "active", "archived"]).default("draft"),
   })
   .superRefine((data, ctx) => {
-    const totalCount = data.images.length + (data?.previousImage?.length ?? 0);
+    const totalCount =
+      (data?.images?.length ?? 0) + (data?.previousImage?.length ?? 0);
+    if (totalCount === 0) {
+      ctx.addIssue({
+        path: ["images"],
+        code: customError,
+        message: "Please add at least one image",
+      });
+      return; // stop further validation
+    }
     if (totalCount > 5) {
       // If previous images exist, force user to remove them first
       if ((data?.previousImage?.length ?? 0) > 0) {
@@ -178,3 +210,13 @@ export const productSchemasForserver = z
       }
     }
   });
+
+export const updateProductSchemasForserver = productSchemasForserver.extend({
+  id: z.string(),
+  sellerEmail: z.string(),
+});
+
+export const deleteProductSchema = z.object({
+  id: z.string(),
+  sellerEmail: z.string(),
+});

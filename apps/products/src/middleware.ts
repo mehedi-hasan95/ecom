@@ -46,7 +46,6 @@ export const adminMiddleware = createMiddleware<Env>(async (c, next) => {
 
 export const sellerMiddleware = createMiddleware<Env>(async (c, next) => {
   const session = await auth.api.getSession({ headers: c.req.raw.headers });
-
   if (!session) {
     c.set("user", null);
     c.set("session", null);

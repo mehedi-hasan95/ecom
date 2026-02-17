@@ -1,5 +1,6 @@
 import { Products } from "@workspace/db";
 import {
+  deleteProductSchema,
   productCreateSchema,
   updateProductSchema,
 } from "@workspace/open-api/schemas/product.schemas";
@@ -109,7 +110,7 @@ export const productUpdateAction = async (
   });
 
   const response = await fetch(
-    "http://localhost:6002/api/v1/products/update-product",
+    `${process.env.NEXT_PUBLIC_PRODUCTS_URL}/products/update`,
     {
       method: "PATCH",
       body: formData,
@@ -121,5 +122,26 @@ export const productUpdateAction = async (
     throw await response.json();
   }
 
+  return response.json();
+};
+
+export const deleteProductAction = async (
+  data: z.input<typeof deleteProductSchema>,
+) => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_PRODUCTS_URL}/products/delete`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(data),
+    },
+  );
+  if (!response.ok) {
+    const error = await response.json();
+    throw error;
+  }
   return response.json();
 };

@@ -137,15 +137,20 @@ export const CreateProductForm = ({ initialData }: Props) => {
   const updateMutation = useMutation({
     mutationFn: productUpdateAction,
     onSuccess: (data) => {
-      console.log(data);
+      toast.success(data.message);
+      router.push("/dashboard/vendor/products");
     },
     onError: (error) => {
-      console.log(error);
+      toast.error(error.message);
     },
   });
   async function onSubmit(data: z.input<typeof productCreateSchema>) {
     if (initialData) {
-      updateMutation.mutate({ id: initialData.id, ...data });
+      updateMutation.mutate({
+        id: initialData.id,
+        sellerEmail: initialData?.userEmail,
+        ...data,
+      });
     } else {
       createMutation.mutate(data);
     }
@@ -228,7 +233,7 @@ export const CreateProductForm = ({ initialData }: Props) => {
                     </FieldLabel>
                     <ImageUploader
                       onChange={field.onChange}
-                      value={field.value}
+                      value={field.value ?? []}
                       disabled={form.formState.isSubmitting}
                       maxFiles={5}
                       onBlur={field.onBlur}

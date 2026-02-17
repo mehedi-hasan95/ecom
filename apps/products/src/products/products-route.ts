@@ -1,13 +1,13 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import { sellerMiddleware } from "../middleware";
-import { productSchemasForserver } from "@workspace/open-api/schemas/product.schemas";
+import {
+  deleteProductSchema,
+  productSchemasForserver,
+  updateProductSchemasForserver,
+} from "@workspace/open-api/schemas/product.schemas";
 
 const tags = ["Products"];
 
-const fileSchema = z.any().openapi({
-  type: "string",
-  format: "binary",
-});
 export const createProductRoute = createRoute({
   method: "post",
   path: "/create",
@@ -25,18 +25,10 @@ export const createProductRoute = createRoute({
   },
   responses: {
     201: {
-      description: "Images uploaded successfully",
-      content: {
-        "application/json": {
-          schema: z.object({
-            success: z.boolean(),
-            message: z.string(),
-          }),
-        },
-      },
+      description: "Create product",
     },
     500: {
-      description: "Not ok",
+      description: "Internal server error",
     },
   },
 });
@@ -68,5 +60,57 @@ export const getSingleProductRoute = createRoute({
   responses: {
     200: { description: "Found" },
     404: { description: "Not Found" },
+  },
+});
+
+/**
+ * ============================================================
+ * 📌 API: Update product
+ * ============================================================
+ */
+
+export const updateProductRoute = createRoute({
+  method: "patch",
+  path: "/update",
+  tags,
+  summary: "Update a Product",
+  middleware: sellerMiddleware,
+  request: {
+    body: {
+      content: {
+        "multipart/form-data": {
+          schema: updateProductSchemasForserver,
+        },
+      },
+    },
+  },
+  responses: {
+    201: {
+      description: "Images uploaded successfully",
+    },
+    404: {
+      description: "Not Found",
+    },
+  },
+});
+
+/**
+ * ============================================================
+ * 📌 API: Delete product
+ * ============================================================
+ */
+
+export const deleteProductRoute = createRoute({
+  method: "delete",
+  path: "/delete",
+  tags,
+  summary: "Delete a product",
+  middleware: sellerMiddleware,
+  request: {
+    body: { content: { "application/json": { schema: deleteProductSchema } } },
+  },
+  responses: {
+    201: { description: "Deleted" },
+    404: { description: "Not found" },
   },
 });
