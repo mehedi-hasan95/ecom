@@ -59,11 +59,13 @@ const Page = () => {
               image={item?.products?.images[0] as string}
               isTrending="Wishlist"
               price={item?.products?.salePrice}
+              basePrice={item?.products?.basePrice}
               productId={item?.productId}
               sellerName={item?.products?.user?.name}
               title={item?.products?.title}
               sellerImage={item?.products?.user?.image}
               colors={item?.products?.color}
+              id={item.id}
             />
           ))}
         </div>

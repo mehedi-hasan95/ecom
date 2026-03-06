@@ -28,11 +28,13 @@ export const HomeProducts = () => {
             productId={item.id}
             image={item.images[0] || ""}
             isTrending="Trending"
-            price={item.basePrice}
+            price={item.salePrice}
+            basePrice={item.basePrice}
             sellerName={item.user.name}
             title={item.title}
             colors={item.color}
             sellerImage={item.user.image}
+            id={item.id}
           />
         ))}
       </div>

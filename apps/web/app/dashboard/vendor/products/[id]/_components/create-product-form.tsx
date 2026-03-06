@@ -138,6 +138,8 @@ export const CreateProductForm = ({ initialData }: Props) => {
     mutationFn: productUpdateAction,
     onSuccess: (data) => {
       toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["products", user?.email] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
       router.push("/dashboard/vendor/products");
     },
     onError: (error) => {

@@ -5,7 +5,6 @@ import {
   removeWishlistRoute,
 } from "./wishlist-route";
 import { prisma } from "@workspace/db";
-import { producer } from "../utils/kafka";
 
 export const createWishlistHandler: RouteHandler<
   typeof createWishlistRoute
@@ -16,7 +15,12 @@ export const createWishlistHandler: RouteHandler<
     const data = await prisma.wishList.create({
       data: { productId: id, userEmail: user?.email as string },
     });
-    producer.send("wishlist.created", { value: JSON.stringify(data) });
+    /**
+     * ============================================================
+     * 📌 Used kafka
+     * ============================================================
+     */
+    // producer.send("wishlist.created", { value: JSON.stringify(data) });
   } catch (error) {
     return c.json({ message: "Product not found" }, 404);
   }
