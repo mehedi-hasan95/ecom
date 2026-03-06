@@ -5,6 +5,7 @@ const nextConfig = {
     remotePatterns: [
       { hostname: "0itertanyb.ufs.sh", protocol: "https" },
       { hostname: "github.com", protocol: "https" },
+      { hostname: "images.unsplash.com", protocol: "https" },
     ],
   },
 };

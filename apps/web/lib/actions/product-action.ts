@@ -80,10 +80,9 @@ export const getSingleProductAction = async (id: string) => {
     const error = await response.json();
     throw error;
   }
-  const data = await response.json();
-  return { product: data };
+  const data: { product: Products } = await response.json();
+  return data.product;
 };
-
 //update product
 
 export const productUpdateAction = async (

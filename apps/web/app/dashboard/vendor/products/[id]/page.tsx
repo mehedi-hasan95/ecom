@@ -8,7 +8,7 @@ const Page = async ({ params }: Props) => {
   const { id } = await params;
 
   const data = await getSingleProductAction(id);
-  return <CreateProductForm initialData={data.product.product} />;
+  return <CreateProductForm initialData={data} />;
 };
 
 export default Page;

@@ -5,6 +5,7 @@ import { Eye } from "lucide-react";
 import Image from "next/image";
 import { WishlistButton } from "./wishlist-button";
 import { useWishlistData } from "@/hooks/use-wishlist";
+import Link from "next/link";
 
 interface Props {
   image: string;
@@ -12,9 +13,11 @@ interface Props {
   sellerImage?: string;
   title: string;
   price: number;
+  basePrice: number;
   colors?: string[];
   isTrending: string;
   productId: string;
+  id: string;
 }
 export const ProductCard = ({
   image,
@@ -22,9 +25,11 @@ export const ProductCard = ({
   sellerImage,
   title,
   price,
+  basePrice,
   colors,
   isTrending,
   productId,
+  id,
 }: Props) => {
   const { data } = useWishlistData();
   const isWishlisted = data?.find((obj) => obj.productId === productId);
@@ -73,15 +78,12 @@ export const ProductCard = ({
               productId={productId}
               isWishlisted={isWishlisted?.productId ? true : false}
             />
-            <Button
-              size="sm"
-              variant="outline"
-              // onClick={() => onQuickView(product)}
-              className="gap-2 "
-            >
-              <Eye className="w-4 h-4" />
-              View
-            </Button>
+            <Link href={`products/${id}`}>
+              <Button size="sm" variant="outline" className="gap-2 ">
+                <Eye className="w-4 h-4" />
+                View Product
+              </Button>
+            </Link>
           </div>
           {/**
            * ============================================================
@@ -92,7 +94,6 @@ export const ProductCard = ({
         <div className="py-4 space-y-3 ">
           <div className="space-y-3">
             <div>
-              <p>Category Name</p>
               <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold">
                 {title}
               </h2>
@@ -102,10 +103,10 @@ export const ProductCard = ({
             <div className="flex gap-2 items-center">
               <h4 className="font-extrabold text-xl">{fromatPrice(price)}</h4>
               <h4 className="line-through text-muted-foreground">
-                {fromatPrice(100)}
+                {fromatPrice(basePrice)}
               </h4>
             </div>
-            {colors ? (
+            {colors?.length ? (
               <div className="flex flex-col items-center">
                 <p>Color</p>
                 <div className="flex gap-2">
@@ -119,7 +120,7 @@ export const ProductCard = ({
                 </div>
               </div>
             ) : (
-              "No color"
+              ""
             )}
           </div>
           <Button className="w-full">Add to Cart</Button>

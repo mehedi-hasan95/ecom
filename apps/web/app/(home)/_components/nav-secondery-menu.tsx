@@ -10,6 +10,12 @@ export const NavSeconderyMenu = () => {
 
           {/* Quick Links */}
           <Link
+            href="/products"
+            className="text-foreground hover:text-primary text-sm transition-colors"
+          >
+            All Products
+          </Link>
+          <Link
             href="/deals"
             className="text-foreground hover:text-primary text-sm transition-colors"
           >

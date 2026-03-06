@@ -12,8 +12,23 @@ import { Heart } from "lucide-react";
 type Props = {
   productId: string;
   isWishlisted: boolean;
+  showTitle?: boolean;
+  className?: string;
+  variant?:
+    | "default"
+    | "link"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost";
 };
-export const WishlistButton = ({ productId, isWishlisted }: Props) => {
+export const WishlistButton = ({
+  productId,
+  isWishlisted,
+  showTitle = true,
+  className,
+  variant = "outline",
+}: Props) => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: createWishlistAction,
@@ -69,7 +84,7 @@ export const WishlistButton = ({ productId, isWishlisted }: Props) => {
   });
   return (
     <Button
-      variant="outline"
+      variant={variant}
       onClick={() =>
         isWishlisted
           ? deleteMutation.mutate(productId)
@@ -77,9 +92,13 @@ export const WishlistButton = ({ productId, isWishlisted }: Props) => {
       }
     >
       <Heart
-        className={cn("w-4 h-4", isWishlisted && "fill-red-500 text-red-500")}
+        className={cn(
+          "w-4 h-4",
+          isWishlisted && "fill-red-500 text-red-500",
+          className,
+        )}
       />
-      WishList
+      {showTitle && "WishList"}
     </Button>
   );
 };
